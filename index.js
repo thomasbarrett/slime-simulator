@@ -172,6 +172,7 @@ let mouse_y = 0;
 let mouse_down = (e) => {
   mouse_x = e.clientX;
   mouse_y = e.clientY;
+  e.preventDefault();
 };
 
 let mouse_up = (e) => {
@@ -187,7 +188,7 @@ let mouse_up = (e) => {
       }
     }
   }
-
+  e.preventDefault();
 }
 
 document.addEventListener('mousedown', mouse_down);
