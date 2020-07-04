@@ -49,7 +49,7 @@ const [vx, vy, vz] = create_velocity();
 let normal_array = new Float32Array(4 * grid_size * grid_size * grid_size);
 
 function compute_force() {
-  const k_spring = 250;
+  const k_spring = 800;
 
   let force_x = new Float32Array(grid_size * grid_size * grid_size);
   let force_y = new Float32Array(grid_size * grid_size * grid_size);
@@ -284,7 +284,7 @@ function update(dt) {
   
   let [force_x, force_y, force_z] = compute_force();
 
-  const max_force = 100;
+  const max_force = 50;
 
   for (let i = 0; i < grid_size * grid_size * grid_size; i++) {
     
@@ -328,16 +328,30 @@ function update(dt) {
   }
 
   for (let i = 0; i < grid_size * grid_size * grid_size; i++) {
-    if (grid_y[i] < -20) {
-      grid_y[i] = -20;
+    if (grid_y[i] < -15) {
+      grid_y[i] = -15;
       if (vy[i] < 0) {
         vy[i] = -vy[i];
       }
     }
 
-    if (grid_x[i] < -20) {
-      grid_x[i] = -20;
+    if (grid_x[i] < -25) {
+      grid_x[i] = -25;
       if (vx[i] < 0) {
+        vx[i] = -vx[i];
+      }
+    }
+
+    if (grid_y[i] > 15) {
+      grid_y[i] = 15;
+      if (vy[i] > 0) {
+        vy[i] = -vy[i];
+      }
+    }
+
+    if (grid_x[i] > 25) {
+      grid_x[i] = 25;
+      if (vx[i] > 0) {
         vx[i] = -vx[i];
       }
     }
@@ -695,7 +709,7 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
   mat4.translate(modelViewMatrix,     // destination matrix
                  modelViewMatrix,     // matrix to translate
-                 [0.0, 20.0, -80.0]);  // amount to translate
+                 [0.0, 0.0, -80.0]);  // amount to translate
   mat4.scale(modelViewMatrix,     // destination matrix
                   modelViewMatrix, [2, 2, 2]);
 
