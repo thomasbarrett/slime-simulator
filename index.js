@@ -49,7 +49,7 @@ const [vx, vy, vz] = create_velocity();
 let normal_array = new Float32Array(4 * grid_size * grid_size * grid_size);
 
 function compute_force() {
-  const k_spring = 100;
+  const k_spring = 800;
 
   let force_x = new Float32Array(grid_size * grid_size * grid_size);
   let force_y = new Float32Array(grid_size * grid_size * grid_size);
@@ -60,7 +60,7 @@ function compute_force() {
       for (let k = 0; k < grid_size; k++) {
 
         let idx = index(i, j, k);
-        let volume_coeff = 50;
+        let volume_coeff = 10;
         let width = 0;
         let height = 0;
         let depth = 0;
@@ -284,7 +284,7 @@ function update(dt) {
   
   let [force_x, force_y, force_z] = compute_force();
 
-  const max_force = 15;
+  const max_force = 100;
 
   for (let i = 0; i < grid_size * grid_size * grid_size; i++) {
     
