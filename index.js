@@ -49,7 +49,7 @@ const [vx, vy, vz] = create_velocity();
 let normal_array = new Float32Array(4 * grid_size * grid_size * grid_size);
 
 function compute_force() {
-  const k_spring = 800;
+  const k_spring = 1000;
 
   let force_x = new Float32Array(grid_size * grid_size * grid_size);
   let force_y = new Float32Array(grid_size * grid_size * grid_size);
@@ -321,9 +321,9 @@ function update(dt) {
     grid_y[i] += vy[i] * dt;
     grid_z[i] += vz[i] * dt;
 
-    vx[i] *= (1 - dt);
-    vy[i] *= (1 - dt);
-    vz[i] *= (1 - dt);
+    vx[i] *= (1 - 2 * dt);
+    vy[i] *= (1 - 2 * dt);
+    vz[i] *= (1 - 2 * dt);
 
   }
 
@@ -604,7 +604,7 @@ function main() {
     varying vec3 v_normal;
     void main(void) {
       vec3 light = vec3(0.2, 0.8, -0.5);
-      float shading = 2.0 / 5.0 + 3.0 / 5.0 * dot(light, v_normal);
+      float shading = 2.0 / 5.0 + 3.0 / 5.0 * dot(light, normalize(v_normal));
       gl_FragColor = vec4(shading * vec3(0.39, 1.0, 0), 1.0);
     }
   `;
