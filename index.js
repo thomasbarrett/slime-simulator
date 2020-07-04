@@ -192,6 +192,29 @@ let mouse_up = (e) => {
 
 }
 
+let touch_down = (e) => {
+  mouse_x = e.touches[0].clientX;
+  mouse_y = e.touches[0].clientY;
+  e.preventDefault();
+};
+
+let touch_up = (e) => {
+  let dx = e.touches[0].clientX - mouse_x;
+  let dy = e.touches[0].clientY - mouse_y;
+
+  for (let i = 0; i < grid_size; i++) {
+    for (let j = 0; j < grid_size; j++) {
+      for (let k = 0; k < grid_size; k++) {
+        let idx = index(i, j, k);
+        vx[idx] += dx;
+        vy[idx] -= dy;
+      }
+    }
+  }
+  e.preventDefault();
+
+}
+
 document.getElementById("glcanvas").addEventListener('mousedown', mouse_down);
 document.getElementById("glcanvas").addEventListener('mouseup', mouse_up);
 document.getElementById("glcanvas").addEventListener('touchstart', mouse_down);
