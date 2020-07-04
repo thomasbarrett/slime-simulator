@@ -567,7 +567,7 @@ function main() {
     void main(void) {
       vec3 light = vec3(0.2, 0.8, -0.5);
       float shading = 2.0 / 5.0 + 3.0 / 5.0 * dot(light, v_normal);
-      gl_FragColor = vec4(shading * vec3(0.39, 1.0, 0), 1.0);
+      gl_FragColor = vec4(shading * vec3(0.44, 0.93, 0.88), 1.0);
     }
   `;
 
