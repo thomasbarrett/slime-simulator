@@ -217,8 +217,8 @@ let touch_up = (e) => {
 
 document.getElementById("glcanvas").addEventListener('mousedown', mouse_down);
 document.getElementById("glcanvas").addEventListener('mouseup', mouse_up);
-document.getElementById("glcanvas").addEventListener('touchstart', mouse_down);
-document.getElementById("glcanvas").addEventListener('touchend', mouse_up);
+document.getElementById("glcanvas").addEventListener('touchstart', touch_down);
+document.getElementById("glcanvas").addEventListener('touchend', touch_up);
 
 document.addEventListener('keypress', (e) => {
   if(e.code == 'Space'){
