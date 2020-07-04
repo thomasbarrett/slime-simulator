@@ -49,7 +49,7 @@ const [vx, vy, vz] = create_velocity();
 let normal_array = new Float32Array(4 * grid_size * grid_size * grid_size);
 
 function compute_force() {
-  const k_spring = 50;
+  const k_spring = 100;
 
   let force_x = new Float32Array(grid_size * grid_size * grid_size);
   let force_y = new Float32Array(grid_size * grid_size * grid_size);
@@ -166,20 +166,17 @@ function compute_force() {
 
 let time = 0;
 
-let mouse_down = false;
 let mouse_x = 0;
 let mouse_y = 0;
 
-document.addEventListener('mousedown', (e) => {
+let mouse_down = (e) => {
   mouse_x = e.clientX;
   mouse_y = e.clientY;
-  mouse_down = true;
-});
+};
 
-document.addEventListener('mouseup', (e) => {
+let mouse_up = (e) => {
   let dx = e.clientX - mouse_x;
   let dy = e.clientY - mouse_y;
-  mouse_down = false;
 
   for (let i = 0; i < grid_size; i++) {
     for (let j = 0; j < grid_size; j++) {
@@ -191,7 +188,12 @@ document.addEventListener('mouseup', (e) => {
     }
   }
 
-});
+}
+
+document.addEventListener('mousedown', mouse_down);
+document.addEventListener('mouseup', mouse_up);
+document.addEventListener('touchdown', mouse_down);
+document.addEventListener('touchup', mouse_up);
 
 document.addEventListener('keypress', (e) => {
   if(e.code == 'Space'){
