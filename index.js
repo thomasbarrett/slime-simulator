@@ -1,6 +1,6 @@
 
 const grid_size = 10;
-const dim = 2;
+const dim = 3;
 
 function index(i, j, k) {
   return i * grid_size * grid_size + j * grid_size + k;
@@ -46,9 +46,10 @@ function create_velocity() {
 const [gxi, gyi, gzi] = create_grid();
 const [grid_x, grid_y, grid_z] = create_grid();
 const [vx, vy, vz] = create_velocity();
+let normal_array = new Float32Array(4 * grid_size * grid_size * grid_size);
 
 function compute_force() {
-  const k_spring = 200;
+  const k_spring = 80;
 
   let force_x = new Float32Array(grid_size * grid_size * grid_size);
   let force_y = new Float32Array(grid_size * grid_size * grid_size);
@@ -295,6 +296,44 @@ function compute_positions() {
   const positions = [];
   const normals = [];
 
+  let push_positions = (indices) => {
+
+    let v1 = [
+      grid_x[indices[0]],
+      grid_y[indices[0]],
+      grid_z[indices[0]]
+    ];
+
+    let v2 = [
+      grid_x[indices[1]],
+      grid_y[indices[1]],
+      grid_z[indices[1]]
+    ]
+
+    let v3 = [
+      grid_x[indices[2]],
+      grid_y[indices[2]],
+      grid_z[indices[2]]
+    ];
+
+    const normal = vec3.cross(
+      vec3.create(), 
+      vec3.sub(vec3.create(), v2, v1),
+      vec3.sub(vec3.create(), v3, v1),
+    );
+
+    positions.push(...v1)
+    positions.push(...v2)
+    positions.push(...v3)
+
+    for (idx of indices) {
+        normal_array[4 * idx + 0] += normal[0]
+        normal_array[4 * idx + 1] += normal[1]
+        normal_array[4 * idx + 2] += normal[2]
+        normal_array[4 * idx + 3] ++;
+    }
+  }
+
   for (let i = 0; i < grid_size - 1; i++) {
     for (let j = 0; j < grid_size - 1; j++) {
       for (let k of [0, grid_size - 1]) {
@@ -308,39 +347,8 @@ function compute_positions() {
             index(i + 1, j, k),
             index(i, j, k)
           ],
-        ]) {
-         
-          let v1 = [
-            grid_x[indices[0]],
-            grid_y[indices[0]],
-            grid_z[indices[0]]
-          ];
-
-          let v2 = [
-            grid_x[indices[1]],
-            grid_y[indices[1]],
-            grid_z[indices[1]]
-          ]
-
-          let v3 = [
-            grid_x[indices[2]],
-            grid_y[indices[2]],
-            grid_z[indices[2]]
-          ];
-
-          const normal = vec3.cross(
-            vec3.create(), 
-            vec3.sub(vec3.create(), v2, v1),
-            vec3.sub(vec3.create(), v3, v1),
-          );
-
-          positions.push(...v1)
-          positions.push(...v2)
-          positions.push(...v3)
-          normals.push(...normal);
-          normals.push(...normal);
-          normals.push(...normal);
-
+        ]) { 
+          push_positions(indices);
         }
       }  
     }
@@ -360,38 +368,7 @@ function compute_positions() {
             index(i, j, k),
           ]
         ]) {
-          
-          let v1 = [
-            grid_x[indices[0]],
-            grid_y[indices[0]],
-            grid_z[indices[0]]
-          ];
-
-          let v2 = [
-            grid_x[indices[1]],
-            grid_y[indices[1]],
-            grid_z[indices[1]]
-          ]
-
-          let v3 = [
-            grid_x[indices[2]],
-            grid_y[indices[2]],
-            grid_z[indices[2]]
-          ];
-
-          const normal = vec3.cross(
-            vec3.create(), 
-            vec3.sub(vec3.create(), v2, v1),
-            vec3.sub(vec3.create(), v3, v1),
-          );
-
-
-          positions.push(...v1)
-          positions.push(...v2)
-          positions.push(...v3)
-          normals.push(...normal);
-          normals.push(...normal);
-          normals.push(...normal);
+          push_positions(indices);
 
         }
       }  
@@ -413,42 +390,110 @@ function compute_positions() {
           ]
         ]) {
 
-          let v1 = [
-            grid_x[indices[0]],
-            grid_y[indices[0]],
-            grid_z[indices[0]]
-          ];
-
-          let v2 = [
-            grid_x[indices[1]],
-            grid_y[indices[1]],
-            grid_z[indices[1]]
-          ]
-
-          let v3 = [
-            grid_x[indices[2]],
-            grid_y[indices[2]],
-            grid_z[indices[2]]
-          ];
-
-          const normal = vec3.cross(
-            vec3.create(), 
-            vec3.sub(vec3.create(), v2, v1),
-            vec3.sub(vec3.create(), v3, v1),
-          );
-
-
-          positions.push(...v1)
-          positions.push(...v2)
-          positions.push(...v3)
-          normals.push(...normal);
-          normals.push(...normal);
-          normals.push(...normal);
+          push_positions(indices);
 
         }
       }  
     }
   }
+
+  for (let i = 0; i < grid_size - 1; i++) {
+    for (let j = 0; j < grid_size - 1; j++) {
+      for (let k of [0, grid_size - 1]) {
+        for (let indices of [
+          [
+            index(i, j, k),
+            index(i, j + 1, k),
+            index(i + 1, j + 1, k)
+          ], [
+            index(i + 1, j + 1, k),
+            index(i + 1, j, k),
+            index(i, j, k)
+          ],
+        ]) { 
+ 
+          normals.push(normal_array[4 * indices[0] + 0] / normal_array[4 * indices[0] + 3])
+          normals.push(normal_array[4 * indices[0] + 1] / normal_array[4 * indices[0] + 3])
+          normals.push(normal_array[4 * indices[0] + 2] / normal_array[4 * indices[0] + 3])
+
+          normals.push(normal_array[4 * indices[1] + 0] / normal_array[4 * indices[1] + 3])
+          normals.push(normal_array[4 * indices[1] + 1] / normal_array[4 * indices[1] + 3])
+          normals.push(normal_array[4 * indices[1] + 2] / normal_array[4 * indices[1] + 3])
+
+          normals.push(normal_array[4 * indices[2] + 0] / normal_array[4 * indices[2] + 3])
+          normals.push(normal_array[4 * indices[2] + 1] / normal_array[4 * indices[2] + 3])
+          normals.push(normal_array[4 * indices[2] + 2] / normal_array[4 * indices[2] + 3])
+
+
+        }
+      }  
+    }
+  }
+
+  for (let i = 0; i < grid_size - 1; i++) {
+    for (let k = 0; k < grid_size - 1; k++) {
+      for (let j of [0, grid_size - 1]) {
+        for (let indices of [
+          [
+            index(i, j, k),
+            index(i, j, k + 1),
+            index(i + 1, j, k + 1),
+          ], [
+            index(i + 1, j, k + 1),
+            index(i + 1, j, k),
+            index(i, j, k),
+          ]
+        ]) {
+
+          normals.push(normal_array[4 * indices[0] + 0] / normal_array[4 * indices[0] + 3])
+          normals.push(normal_array[4 * indices[0] + 1] / normal_array[4 * indices[0] + 3])
+          normals.push(normal_array[4 * indices[0] + 2] / normal_array[4 * indices[0] + 3])
+
+          normals.push(normal_array[4 * indices[1] + 0] / normal_array[4 * indices[1] + 3])
+          normals.push(normal_array[4 * indices[1] + 1] / normal_array[4 * indices[1] + 3])
+          normals.push(normal_array[4 * indices[1] + 2] / normal_array[4 * indices[1] + 3])
+
+          normals.push(normal_array[4 * indices[2] + 0] / normal_array[4 * indices[2] + 3])
+          normals.push(normal_array[4 * indices[2] + 1] / normal_array[4 * indices[2] + 3])
+          normals.push(normal_array[4 * indices[2] + 2] / normal_array[4 * indices[2] + 3])
+
+
+        }
+      }  
+    }
+  }
+
+  for (let k = 0; k < grid_size - 1; k++) {
+    for (let j = 0; j < grid_size - 1; j++) {
+      for (let i of [0, grid_size - 1]) {
+        for (let indices of [
+          [
+            index(i, j, k),
+            index(i, j + 1, k),
+            index(i, j + 1, k + 1),
+          ], [
+            index(i, j + 1, k + 1),
+            index(i, j, k + 1),
+            index(i, j, k),
+          ]
+        ]) {
+          normals.push(normal_array[4 * indices[0] + 0] / normal_array[4 * indices[0] + 3])
+          normals.push(normal_array[4 * indices[0] + 1] / normal_array[4 * indices[0] + 3])
+          normals.push(normal_array[4 * indices[0] + 2] / normal_array[4 * indices[0] + 3])
+
+          normals.push(normal_array[4 * indices[1] + 0] / normal_array[4 * indices[1] + 3])
+          normals.push(normal_array[4 * indices[1] + 1] / normal_array[4 * indices[1] + 3])
+          normals.push(normal_array[4 * indices[1] + 2] / normal_array[4 * indices[1] + 3])
+
+          normals.push(normal_array[4 * indices[2] + 0] / normal_array[4 * indices[2] + 3])
+          normals.push(normal_array[4 * indices[2] + 1] / normal_array[4 * indices[2] + 3])
+          normals.push(normal_array[4 * indices[2] + 2] / normal_array[4 * indices[2] + 3])
+
+        }
+      }  
+    }
+  }
+
   return [new Float32Array(positions), new Float32Array(normals)];
 }
 
@@ -491,7 +536,7 @@ function main() {
     varying vec3 v_normal;
     void main(void) {
       vec3 light = vec3(0.2, 0.8, -0.5);
-      float shading = 2.0 / 5.0 + 3.0 / 5.0 * dot(light, normalize(v_normal));
+      float shading = 2.0 / 5.0 + 3.0 / 5.0 * dot(light, v_normal);
       gl_FragColor = vec4(shading * vec3(0.39, 1.0, 0), 1.0);
     }
   `;
