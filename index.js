@@ -49,7 +49,7 @@ const [vx, vy, vz] = create_velocity();
 let normal_array = new Float32Array(4 * grid_size * grid_size * grid_size);
 
 function compute_force() {
-  const k_spring = 80;
+  const k_spring = 50;
 
   let force_x = new Float32Array(grid_size * grid_size * grid_size);
   let force_y = new Float32Array(grid_size * grid_size * grid_size);
@@ -166,6 +166,33 @@ function compute_force() {
 
 let time = 0;
 
+let mouse_down = false;
+let mouse_x = 0;
+let mouse_y = 0;
+
+document.addEventListener('mousedown', (e) => {
+  mouse_x = e.clientX;
+  mouse_y = e.clientY;
+  mouse_down = true;
+});
+
+document.addEventListener('mouseup', (e) => {
+  let dx = e.clientX - mouse_x;
+  let dy = e.clientY - mouse_y;
+  mouse_down = false;
+
+  for (let i = 0; i < grid_size; i++) {
+    for (let j = 0; j < grid_size; j++) {
+      for (let k = 0; k < grid_size; k++) {
+        let idx = index(i, j, k);
+        vx[idx] += dx;
+        vy[idx] -= dy;
+      }
+    }
+  }
+
+});
+
 document.addEventListener('keypress', (e) => {
   if(e.code == 'Space'){
     for (let i = 0; i < grid_size; i++) {
@@ -230,7 +257,7 @@ function update(dt) {
   
   let [force_x, force_y, force_z] = compute_force();
 
-  const max_force = 10;
+  const max_force = 15;
 
   for (let i = 0; i < grid_size * grid_size * grid_size; i++) {
     
@@ -641,7 +668,7 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
   mat4.translate(modelViewMatrix,     // destination matrix
                  modelViewMatrix,     // matrix to translate
-                 [15.0, 20.0, -50.0]);  // amount to translate
+                 [0.0, 20.0, -80.0]);  // amount to translate
   mat4.scale(modelViewMatrix,     // destination matrix
                   modelViewMatrix, [2, 2, 2]);
 
