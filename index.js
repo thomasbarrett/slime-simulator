@@ -192,8 +192,8 @@ let mouse_up = (e) => {
 
 document.addEventListener('mousedown', mouse_down);
 document.addEventListener('mouseup', mouse_up);
-document.addEventListener('touchdown', mouse_down);
-document.addEventListener('touchup', mouse_up);
+document.addEventListener('touchstart', mouse_down);
+document.addEventListener('touchend', mouse_up);
 
 document.addEventListener('keypress', (e) => {
   if(e.code == 'Space'){
