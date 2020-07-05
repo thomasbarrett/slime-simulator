@@ -49,7 +49,7 @@ const [vx, vy, vz] = create_velocity();
 let normal_array = new Float32Array(4 * grid_size * grid_size * grid_size);
 
 function compute_force() {
-  const k_spring = 1000;
+  const k_spring = 200;
 
   let force_x = new Float32Array(grid_size * grid_size * grid_size);
   let force_y = new Float32Array(grid_size * grid_size * grid_size);
@@ -60,7 +60,7 @@ function compute_force() {
       for (let k = 0; k < grid_size; k++) {
 
         let idx = index(i, j, k);
-        let volume_coeff = 10;
+        let volume_coeff = 50;
         let width = 0;
         let height = 0;
         let depth = 0;
@@ -226,7 +226,7 @@ document.addEventListener('keypress', (e) => {
       for (let j = 0; j < grid_size; j++) {
         for (let k = 0; k < grid_size; k++) {
           let idx = index(i, j, k);
-          vy[idx] += 100 / (j + 1);
+          vy[idx] += 200 / (j + 1);
         }
       }
     }
@@ -288,9 +288,10 @@ function update(dt) {
 
   for (let i = 0; i < grid_size * grid_size * grid_size; i++) {
     
+    force_y[i] -= 30;
 
     vx[i] += force_x[i] * dt;
-    vy[i] += (force_y[i] - 10) * dt;
+    vy[i] += force_y[i] * dt;
     vz[i] += force_z[i] * dt;
 
     if (isNaN(vx[i])) {
@@ -324,7 +325,7 @@ function update(dt) {
     vx[i] *= (1 - 2 * dt);
     vy[i] *= (1 - 2 * dt);
     vz[i] *= (1 - 2 * dt);
-
+    
   }
 
   for (let i = 0; i < grid_size * grid_size * grid_size; i++) {
